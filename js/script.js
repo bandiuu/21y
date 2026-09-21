@@ -6,37 +6,40 @@ let discoveredCount = 0;
 const totalFlowers = 5;
 
 /* =========================================================================
-   DATOS DE LAS FLORES
+   DATOS DE LAS FLORES (Corrección Total iOS)
+   - La frase 5 se renderiza a la IZQUIERDA (right: 100%) como lo pediste.
+   - Las alturas (top) tienen un espaciado matemático exacto para no tocarse.
    ========================================================================= */
 const gardenData = [
     {
         id: 1, phrase: "Por tu sonrisa.",
-        top: "7%", left: "12%",
+        top: "2%", left: "10%",
         textStyles: "left: 100%; top: 20%; margin-left: 15px; text-align: left; width: max-content;",
         delay: "0s", scale: 0.95
     },
     {
         id: 2, phrase: "Por esa energía que tienes.",
-        top: "21%", right: "12%",
+        top: "18%", right: "10%",
         textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right; width: max-content;",
         delay: "-1s", scale: 1
     },
     {
         id: 3, phrase: "Porque me pareciste increíble desde que empezamos a hablar.",
-        top: "35%", left: "8%",
-        textStyles: "left: 100%; top: 0%; margin-left: 15px; text-align: left; width: 145px;",
+        top: "34%", left: "8%",
+        textStyles: "left: 100%; top: 5%; margin-left: 15px; text-align: left; width: 140px;",
         delay: "-2.5s", scale: 0.85
     },
     {
         id: 4, phrase: "Porque algunas personas simplemente llaman la atención.",
-        top: "49%", right: "8%",
-        textStyles: "right: 100%; top: 0%; margin-right: 15px; text-align: right; width: 140px;",
+        top: "50%", right: "8%",
+        textStyles: "right: 100%; top: 5%; margin-right: 15px; text-align: right; width: 135px;",
         delay: "-1.5s", scale: 0.9
     },
     {
         id: 5, phrase: "Y porque sí.",
-        top: "64%", left: "50%",
-        textStyles: "top: 100%; left: 50%; transform: translateX(-50%); margin-top: 15px; text-align: center; white-space: nowrap;",
+        top: "68%", left: "55%", 
+        // SOLUCIÓN: texto posicionado estrictamente a la izquierda de la flor 5
+        textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right; white-space: nowrap;",
         delay: "-0.5s", scale: 1.05
     }
 ];
@@ -90,13 +93,10 @@ function setupEventListeners() {
 }
 
 /* =========================================================================
-   GENERACIÓN SVG CON FALLBACKS DE COLOR Y TAMAÑO
-   (Para evitar renderizados negros/gigantes si falla la conexión)
+   GENERACIÓN SVG
    ========================================================================= */
 function createFlowerSVG(isOpen = false, isSpecial = false) {
     const openClass = isOpen ? ' open' : '';
-    
-    // Colores con respaldo explícito (#hex) en caso de que el CSS tarde en cargar
     const centerColor = isSpecial ? 'var(--yellow-dark, #D97706)' : '#EAB308';
     const petalColor = isSpecial ? 'var(--yellow-deep, #EAB308)' : 'var(--yellow-soft, #FDE047)';
     const stemColor = 'var(--olive-light, #879671)';
@@ -115,7 +115,6 @@ function createFlowerSVG(isOpen = false, isSpecial = false) {
         `;
     }
 
-    // El ancho y alto en la etiqueta garantizan un tamaño prudente temporal
     return `
         <svg class="flower${openClass}" viewBox="0 0 100 110" width="60" height="90" style="max-width: 100%;" xmlns="http://www.w3.org/2000/svg">
             <path d="M50,40 Q45,75 52,105" stroke="${stemColor}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
