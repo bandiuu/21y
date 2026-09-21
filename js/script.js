@@ -6,39 +6,40 @@ let discoveredCount = 0;
 const totalFlowers = 5;
 
 /* =========================================================================
-   DATOS DE LAS FLORES (Posicionamiento calibrado para evitar choques)
-   Se ha reducido la distribución vertical al top 64% de la pantalla,
-   dejando completamente libre la zona inferior para los textos y botón.
+   DATOS DE LAS FLORES (Corrección definitiva de superposición)
+   Se ha modificado la Flor 5 para que su texto aparezca por DEBAJO de
+   la flor en lugar de por encima. Así, nunca colisionará con la Flor 4.
    ========================================================================= */
 const gardenData = [
     {
         id: 1, phrase: "Por tu sonrisa.",
-        top: "7%", left: "12%",
+        top: "5%", left: "10%",
         textStyles: "left: 100%; top: 20%; margin-left: 15px; text-align: left; width: max-content;",
         delay: "0s", scale: 0.95
     },
     {
         id: 2, phrase: "Por esa energía que tienes.",
-        top: "21%", right: "12%",
+        top: "19%", right: "10%",
         textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right; width: max-content;",
         delay: "-1s", scale: 1
     },
     {
         id: 3, phrase: "Porque me pareciste increíble desde que empezamos a hablar.",
-        top: "35%", left: "8%",
-        textStyles: "left: 100%; top: 5%; margin-left: 15px; text-align: left; width: 145px;",
+        top: "33%", left: "8%",
+        textStyles: "left: 100%; top: 0%; margin-left: 15px; text-align: left; width: 145px;",
         delay: "-2.5s", scale: 0.85
     },
     {
         id: 4, phrase: "Porque algunas personas simplemente llaman la atención.",
-        top: "49%", right: "8%",
-        textStyles: "right: 100%; top: 5%; margin-right: 15px; text-align: right; width: 140px;",
+        top: "48%", right: "8%",
+        textStyles: "right: 100%; top: 0%; margin-right: 15px; text-align: right; width: 140px;",
         delay: "-1.5s", scale: 0.9
     },
     {
         id: 5, phrase: "Y porque sí.",
-        top: "64%", left: "50%",
-        textStyles: "bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 12px; text-align: center; white-space: nowrap;",
+        top: "63%", left: "50%",
+        // Cambio clave: 'top: 100%' hace que el texto aparezca por debajo de la flor.
+        textStyles: "top: 100%; left: 50%; transform: translateX(-50%); margin-top: 15px; text-align: center; white-space: nowrap;",
         delay: "-0.5s", scale: 1.05
     }
 ];
@@ -206,7 +207,6 @@ function showGardenCompletion() {
                 n3.classList.add('visible');
                 
                 setTimeout(() => {
-                    // Aparece el botón de manera clara y funcional
                     btn.classList.add('visible');
                 }, 1500);
 
@@ -229,7 +229,7 @@ function openSpecialFlower() {
     setTimeout(() => {
         document.getElementById('special-message').classList.add('visible');
         
-        // Aparece "Continuar" después de 1.5s
+        // Aparece "Continuar" claramente de forma táctil y visible
         setTimeout(() => {
             document.getElementById('btn-final-scene').classList.add('visible');
         }, 1500);
