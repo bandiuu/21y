@@ -1,352 +1,264 @@
-/* =========================================
-   1. RESET & VARIABLES
-   ========================================= */
-:root {
-    --cream: #FCFBF8;
-    --yellow-soft: #FDE047;
-    --yellow-deep: #EAB308;
-    --yellow-dark: #D97706;
-    --olive-light: #879671;
-    --olive-dark: #6B7B54;
-    --text-main: #2C2C28;
-    --text-sub: #5A5A55;
+/* =========================================================================
+   ESTADO GLOBAL
+   ========================================================================= */
+let currentScene = 1;
+let discoveredCount = 0;
+const totalFlowers = 5;
+
+/* =========================================================================
+   DATOS DE LAS FLORES (Corrección definitiva de superposición)
+   Se ha modificado la Flor 5 para que su texto aparezca por DEBAJO de
+   la flor en lugar de por encima. Así, nunca colisionará con la Flor 4.
+   ========================================================================= */
+const gardenData = [
+    {
+        id: 1, phrase: "Por tu sonrisa.",
+        top: "5%", left: "10%",
+        textStyles: "left: 100%; top: 20%; margin-left: 15px; text-align: left; width: max-content;",
+        delay: "0s", scale: 0.95
+    },
+    {
+        id: 2, phrase: "Por esa energía que tienes.",
+        top: "19%", right: "10%",
+        textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right; width: max-content;",
+        delay: "-1s", scale: 1
+    },
+    {
+        id: 3, phrase: "Porque me pareciste increíble desde que empezamos a hablar.",
+        top: "33%", left: "8%",
+        textStyles: "left: 100%; top: 0%; margin-left: 15px; text-align: left; width: 145px;",
+        delay: "-2.5s", scale: 0.85
+    },
+    {
+        id: 4, phrase: "Porque algunas personas simplemente llaman la atención.",
+        top: "48%", right: "8%",
+        textStyles: "right: 100%; top: 0%; margin-right: 15px; text-align: right; width: 140px;",
+        delay: "-1.5s", scale: 0.9
+    },
+    {
+        id: 5, phrase: "Y porque sí.",
+        top: "63%", left: "50%",
+        // Cambio clave: 'top: 100%' hace que el texto aparezca por debajo de la flor.
+        textStyles: "top: 100%; left: 50%; transform: translateX(-50%); margin-top: 15px; text-align: center; white-space: nowrap;",
+        delay: "-0.5s", scale: 1.05
+    }
+];
+
+/* =========================================================================
+   INICIALIZACIÓN
+   ========================================================================= */
+document.addEventListener("DOMContentLoaded", () => {
+    setupEventListeners();
+    renderScene1Flower();
+    renderScene2Flower();
+    renderGardenFlowers();
+    renderSpecialFlower();
+});
+
+/* =========================================================================
+   MANEJO DE ESCENAS
+   ========================================================================= */
+function showScene(sceneNumber) {
+    document.querySelector('.scene.active').classList.remove('active');
+    currentScene = sceneNumber;
     
-    --z-background: 0;
-    --z-flowers: 10;
-    --z-phrases: 20;
-    --z-ui: 30;
-    --z-overlay: 40;
+    setTimeout(() => {
+        document.getElementById(`scene-${sceneNumber}`).classList.add('active');
+    }, 1000);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+function setupEventListeners() {
+    // Escena 1 -> Escena 2
+    document.getElementById('btn-start').addEventListener('click', () => {
+        showScene(2);
+        setTimeout(() => {
+            const scene2Svg = document.querySelector('#scene-2-flower svg');
+            if (scene2Svg) scene2Svg.classList.add('open');
+        }, 1200);
+    });
+
+    // Escena 2 -> Jardín
+    document.getElementById('btn-enter-garden').addEventListener('click', () => {
+        showScene(3);
+    });
+
+    // Jardín completado -> Flor Especial
+    document.getElementById('btn-next-special').addEventListener('click', () => {
+        showScene(4);
+    });
+
+    // Flor Especial ("Continuar") -> Final
+    document.getElementById('btn-final-scene').addEventListener('click', () => {
+        showScene(5);
+        startFinalSequence();
+    });
+
+    // Interacción Flor Especial
+    document.getElementById('special-flower-touch').addEventListener('click', openSpecialFlower);
 }
 
-html, body {
-    width: 100%;
-    height: 100dvh; 
-    background-color: var(--cream);
-    overflow: hidden; 
-    overscroll-behavior: none;
+/* =========================================================================
+   GENERACIÓN SVG (Flores)
+   ========================================================================= */
+function createFlowerSVG(isOpen = false, isSpecial = false) {
+    const openClass = isOpen ? ' open' : '';
+    const centerColor = isSpecial ? 'var(--yellow-dark)' : '#EAB308';
+    const petalColor = isSpecial ? 'var(--yellow-deep)' : 'var(--yellow-soft)';
+    
+    const numPetals = isSpecial ? 10 : 7;
+    let petalsHTML = '';
+    
+    for (let i = 0; i < numPetals; i++) {
+        const angle = (360 / numPetals) * i;
+        const delay = (Math.random() * 0.3).toFixed(2);
+        petalsHTML += `
+            <g transform="rotate(${angle} 50 30)">
+                <ellipse class="petal" cx="50" cy="10" rx="9" ry="22" fill="${petalColor}" style="transition-delay: ${delay}s"/>
+            </g>
+        `;
+    }
+
+    return `
+        <svg class="flower${openClass}" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,40 Q45,75 52,105" stroke="var(--olive-light)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M51,75 Q35,65 40,50 Q50,60 51,75" fill="var(--olive-dark)"/>
+            <path d="M51,85 Q65,80 60,65 Q50,75 51,85" fill="var(--olive-dark)"/>
+            <g class="petal-group">
+                ${petalsHTML}
+            </g>
+            <circle cx="50" cy="30" r="7.5" fill="${centerColor}" />
+        </svg>
+    `;
 }
 
-/* =========================================
-   2. TYPOGRAPHY
-   ========================================= */
-.serif { font-family: 'Playfair Display', serif; font-weight: 400; }
-.sans { font-family: 'Montserrat', sans-serif; font-weight: 400; }
-
-.text-main { color: var(--text-main); }
-.text-sub { color: var(--text-sub); }
-.text-highlight { color: var(--yellow-dark); }
-.uppercase { text-transform: uppercase; }
-.spacing { letter-spacing: 2px; }
-
-h1 { font-size: 26px; line-height: 1.4; margin-top: 25px; margin-bottom: 12px; }
-h2 { font-size: 22px; line-height: 1.4; margin-top: 20px; margin-bottom: 10px; }
-p { font-size: 15px; }
-
-/* =========================================
-   3. LAYOUT & SCENES
-   ========================================= */
-#app-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+function renderScene1Flower() {
+    document.getElementById('scene-1-flower').innerHTML = createFlowerSVG(false, false);
 }
 
-.scene {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 30px 20px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: var(--z-background);
-    overflow-y: auto; 
-    overflow-x: hidden;
+function renderScene2Flower() {
+    document.getElementById('scene-2-flower').innerHTML = createFlowerSVG(false, false);
 }
 
-.scene.active {
-    opacity: 1;
-    pointer-events: auto;
-    z-index: var(--z-ui);
+function renderSpecialFlower() {
+    document.getElementById('special-flower-touch').insertAdjacentHTML('beforebegin', createFlowerSVG(false, true));
 }
 
-/* =========================================
-   4. BUTTONS GLOBALES
-   ========================================= */
-.btn {
-    margin-top: 35px;
-    padding: 14px 32px;
-    background: transparent;
-    border: 1px solid rgba(44, 44, 40, 0.25);
-    color: var(--text-main);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    border-radius: 40px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+/* =========================================================================
+   LÓGICA DEL JARDÍN
+   ========================================================================= */
+function renderGardenFlowers() {
+    const gardenArea = document.getElementById('garden-area');
+    
+    gardenData.forEach(flower => {
+        const item = document.createElement('div');
+        item.className = 'garden-item';
+        
+        if(flower.top) item.style.top = flower.top;
+        if(flower.left) item.style.left = flower.left;
+        if(flower.right) item.style.right = flower.right;
+        item.style.transform = `scale(${flower.scale})`;
+        
+        item.innerHTML = `
+            <div class="flower-wrapper" style="animation-delay: ${flower.delay}">
+                ${createFlowerSVG(false, false)}
+            </div>
+            <div class="flower-phrase" style="${flower.textStyles}">
+                ${flower.phrase}
+            </div>
+            <div class="touch-area"></div>
+        `;
+        
+        const touchArea = item.querySelector('.touch-area');
+        touchArea.addEventListener('click', () => discoverFlower(item));
+        
+        gardenArea.appendChild(item);
+    });
 }
 
-.btn:active {
-    background: rgba(44, 44, 40, 0.05);
-    transform: scale(0.96);
+function discoverFlower(flowerItem) {
+    if (flowerItem.classList.contains('discovered')) return;
+
+    flowerItem.classList.add('discovered');
+    flowerItem.querySelector('svg').classList.add('open');
+
+    discoveredCount++;
+    document.getElementById('progress-text').innerText = `${discoveredCount} / ${totalFlowers}`;
+
+    if (discoveredCount === totalFlowers) {
+        showGardenCompletion();
+    }
 }
 
-/* =========================================
-   5. FLOWERS (SVG CSS)
-   ========================================= */
-.flower-wrapper {
-    position: relative;
-    animation: sway 6s infinite ease-in-out alternate;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+function showGardenCompletion() {
+    setTimeout(() => {
+        const n1 = document.getElementById('narrative-1');
+        const n2 = document.getElementById('narrative-2');
+        const n3 = document.getElementById('narrative-3');
+        const btn = document.getElementById('btn-next-special');
+
+        n1.classList.add('visible');
+        
+        setTimeout(() => {
+            n1.classList.remove('visible');
+            n2.classList.add('visible');
+            
+            setTimeout(() => {
+                n2.classList.remove('visible');
+                n3.classList.add('visible');
+                
+                setTimeout(() => {
+                    btn.classList.add('visible');
+                }, 1500);
+
+            }, 2500);
+        }, 2500);
+
+    }, 1500);
 }
 
-.scale-up { transform: scale(1.15); }
+/* =========================================================================
+   LÓGICA DE LA FLOR ESPECIAL
+   ========================================================================= */
+function openSpecialFlower() {
+    const wrapper = document.getElementById('special-flower-area');
+    if (wrapper.classList.contains('open')) return;
 
-svg.flower {
-    width: clamp(50px, 15vw, 65px);
-    height: clamp(75px, 22vw, 95px);
-    overflow: visible;
+    wrapper.classList.add('open');
+    wrapper.querySelector('svg').classList.add('open');
+
+    setTimeout(() => {
+        document.getElementById('special-message').classList.add('visible');
+        
+        // Aparece "Continuar" claramente de forma táctil y visible
+        setTimeout(() => {
+            document.getElementById('btn-final-scene').classList.add('visible');
+        }, 1500);
+
+    }, 1200);
 }
 
-.petal {
-    transform-origin: 50px 30px;
-    transform: scale(0);
-    opacity: 0;
-    transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.8s ease;
-}
+/* =========================================================================
+   SECUENCIA FINAL CON RAMO PNG
+   ========================================================================= */
+function startFinalSequence() {
+    setTimeout(() => {
+        document.getElementById('final-bouquet-img').classList.add('visible');
+        
+        setTimeout(() => {
+            document.getElementById('final-1').classList.add('visible');
+            
+            setTimeout(() => {
+                document.getElementById('final-2').classList.add('visible');
+                
+                setTimeout(() => {
+                    document.getElementById('final-3').classList.add('visible');
+                    
+                    setTimeout(() => {
+                        document.getElementById('final-4').classList.add('visible');
+                    }, 3500);
 
-svg.flower.open .petal {
-    transform: scale(1);
-    opacity: 1;
-}
-
-@keyframes sway {
-    0% { transform: rotate(-3deg); }
-    100% { transform: rotate(3deg); }
-}
-
-/* =========================================
-   6. SCENE 3: GARDEN
-   ========================================= */
-.garden-header {
-    margin-bottom: 20px;
-    z-index: var(--z-ui);
-}
-
-.progress-indicator {
-    font-size: 12px;
-    letter-spacing: 3px;
-    margin-top: 15px;
-    opacity: 0.6;
-}
-
-#garden-area {
-    position: relative;
-    width: 100%;
-    flex-grow: 1;
-    max-width: 420px;
-    margin: 0 auto;
-}
-
-.garden-item {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.touch-area {
-    position: absolute;
-    width: 70px;
-    height: 90px;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: var(--z-ui);
-    cursor: pointer;
-}
-
-.flower-phrase {
-    position: absolute;
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: clamp(14px, 3.8vw, 16px);
-    line-height: 1.3;
-    color: var(--text-main);
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 1s ease, transform 1s ease;
-    pointer-events: none;
-    z-index: var(--z-phrases);
-    text-shadow: 0 1px 8px var(--cream), 0 -1px 8px var(--cream);
-}
-
-.garden-item.discovered .flower-phrase {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* =========================================
-   7. TRANSICIÓN DEL JARDÍN
-   ========================================= */
-.garden-narrative {
-    position: absolute;
-    bottom: 5%; 
-    left: 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: none;
-    z-index: var(--z-overlay);
-    padding-bottom: env(safe-area-inset-bottom);
-}
-
-.narrative-text-container {
-    position: relative;
-    height: 25px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.narrative-text {
-    font-size: 19px;
-    position: absolute;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 1.2s ease, transform 1.2s ease;
-    text-align: center;
-    width: 100%;
-    text-shadow: 0 2px 10px var(--cream), 0 -2px 10px var(--cream), 2px 0 10px var(--cream), -2px 0 10px var(--cream);
-}
-
-.narrative-text.visible { opacity: 1; transform: translateY(0); }
-
-.narrative-btn {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(10px);
-    transition: opacity 1s ease, transform 1s ease;
-    margin-top: 20px;
-}
-
-.narrative-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-}
-
-/* =========================================
-   8. SCENE 4: SPECIAL FLOWER & CONTINUAR
-   ========================================= */
-#scene-4 .flower-wrapper { margin: 40px 0; }
-#scene-4 .scale-up { transform: scale(1.4); }
-
-.glow {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 140px; height: 140px;
-    transform: translate(-50%, -50%) scale(0.8);
-    background: radial-gradient(circle, rgba(234, 179, 8, 0.15) 0%, rgba(255,255,255,0) 65%);
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 2s ease, transform 2s ease;
-    pointer-events: none;
-    z-index: var(--z-background);
-}
-
-.special-flower-wrapper.open .glow {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-}
-
-.special-footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 120px;
-}
-
-.special-message {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 1.5s ease, transform 1.5s ease;
-    margin: 0;
-}
-
-.special-message.visible { opacity: 1; transform: translateY(0); }
-
-.continue-btn {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(10px);
-    transition: opacity 1s ease, transform 1s ease;
-    margin-top: 25px;
-}
-
-.continue-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-}
-
-/* =========================================
-   9. SCENE 5: FINAL CON RAMO PNG
-   ========================================= */
-.final-bouquet {
-    width: min(78vw, 360px);
-    max-height: 42vh;
-    object-fit: contain;
-    margin-bottom: 25px;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 1.8s ease, transform 1.8s ease;
-    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.04));
-}
-
-.final-bouquet.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.final-sequence {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
-
-.final-text {
-    opacity: 0;
-    transform: translateY(15px);
-    transition: opacity 1.5s ease, transform 1.5s ease;
-}
-
-.final-text.visible { opacity: 1; transform: translateY(0); }
-
-#final-2 { font-size: 24px; margin: 10px 0; }
-
-.because-yes {
-    font-size: 13px;
-    letter-spacing: 2px;
-    margin-top: 25px;
-    color: var(--text-sub);
+                }, 2500);
+            }, 2500);
+        }, 2000); 
+    }, 800); 
 }
