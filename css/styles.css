@@ -11,7 +11,6 @@
     --text-main: #2C2C28;
     --text-sub: #5A5A55;
     
-    /* Z-Index layer map */
     --z-background: 0;
     --z-flowers: 10;
     --z-phrases: 20;
@@ -28,25 +27,17 @@
 
 html, body {
     width: 100%;
-    /* dvh garantiza que se adapte a la barra de navegación del móvil */
     height: 100dvh; 
     background-color: var(--cream);
-    overflow: hidden; /* Sin scroll horizontal ni vertical */
+    overflow: hidden; 
     overscroll-behavior: none;
 }
 
 /* =========================================
    2. TYPOGRAPHY
    ========================================= */
-.serif {
-    font-family: 'Playfair Display', serif;
-    font-weight: 400;
-}
-
-.sans {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-}
+.serif { font-family: 'Playfair Display', serif; font-weight: 400; }
+.sans { font-family: 'Montserrat', sans-serif; font-weight: 400; }
 
 .text-main { color: var(--text-main); }
 .text-sub { color: var(--text-sub); }
@@ -54,8 +45,8 @@ html, body {
 .uppercase { text-transform: uppercase; }
 .spacing { letter-spacing: 2px; }
 
-h1 { font-size: 26px; line-height: 1.4; margin-bottom: 12px; }
-h2 { font-size: 22px; line-height: 1.4; margin-bottom: 15px; }
+h1 { font-size: 26px; line-height: 1.4; margin-top: 25px; margin-bottom: 12px; }
+h2 { font-size: 22px; line-height: 1.4; margin-top: 20px; margin-bottom: 10px; }
 p { font-size: 15px; }
 
 /* =========================================
@@ -65,7 +56,6 @@ p { font-size: 15px; }
     position: relative;
     width: 100%;
     height: 100%;
-    /* Respetar notch y barras de sistema */
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
@@ -94,7 +84,7 @@ p { font-size: 15px; }
    4. BUTTONS
    ========================================= */
 .btn {
-    margin-top: 40px;
+    margin-top: 35px;
     padding: 14px 32px;
     background: transparent;
     border: 1px solid rgba(44, 44, 40, 0.25);
@@ -106,7 +96,6 @@ p { font-size: 15px; }
     border-radius: 40px;
     cursor: pointer;
     transition: all 0.3s ease;
-    /* Área táctil mínima asegurada por el padding */
 }
 
 .btn:active {
@@ -125,9 +114,11 @@ p { font-size: 15px; }
     align-items: center;
 }
 
+.scale-up { transform: scale(1.15); }
+
 svg.flower {
-    width: 60px;
-    height: 90px;
+    width: clamp(50px, 15vw, 65px);
+    height: clamp(75px, 22vw, 95px);
     overflow: visible;
 }
 
@@ -144,8 +135,8 @@ svg.flower.open .petal {
 }
 
 @keyframes sway {
-    0% { transform: rotate(-4deg); }
-    100% { transform: rotate(4deg); }
+    0% { transform: rotate(-3deg); }
+    100% { transform: rotate(3deg); }
 }
 
 /* =========================================
@@ -167,7 +158,7 @@ svg.flower.open .petal {
     position: relative;
     width: 100%;
     flex-grow: 1;
-    max-width: 400px;
+    max-width: 420px;
     margin: 0 auto;
 }
 
@@ -178,7 +169,6 @@ svg.flower.open .petal {
     align-items: center;
 }
 
-/* Área táctil generosa para móviles */
 .touch-area {
     position: absolute;
     width: 70px;
@@ -193,7 +183,7 @@ svg.flower.open .petal {
     position: absolute;
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: 16px;
+    font-size: clamp(14px, 3.8vw, 16px);
     line-height: 1.3;
     color: var(--text-main);
     opacity: 0;
@@ -201,7 +191,8 @@ svg.flower.open .petal {
     transition: opacity 1s ease, transform 1s ease;
     pointer-events: none;
     z-index: var(--z-phrases);
-    width: max-content;
+    /* Sombra blanca sutil para legibilidad garantizada sobre cualquier tallo */
+    text-shadow: 0 1px 8px var(--cream), 0 -1px 8px var(--cream);
 }
 
 .garden-item.discovered .flower-phrase {
@@ -214,7 +205,7 @@ svg.flower.open .petal {
    ========================================= */
 .garden-narrative {
     position: absolute;
-    bottom: 10%;
+    bottom: env(safe-area-inset-bottom, 25px);
     left: 0;
     width: 100%;
     display: flex;
@@ -222,6 +213,7 @@ svg.flower.open .petal {
     align-items: center;
     pointer-events: none;
     z-index: var(--z-overlay);
+    text-shadow: 0 2px 15px var(--cream), 0 -2px 15px var(--cream);
 }
 
 .narrative-text {
@@ -232,10 +224,7 @@ svg.flower.open .petal {
     transition: opacity 1.2s ease, transform 1.2s ease;
 }
 
-.narrative-text.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.narrative-text.visible { opacity: 1; transform: translateY(0); }
 
 .narrative-btn {
     opacity: 0;
@@ -243,7 +232,7 @@ svg.flower.open .petal {
     transform: translateY(10px);
     transition: opacity 1s ease, transform 1s ease;
     position: absolute;
-    top: 40px; 
+    top: 35px; 
 }
 
 .narrative-btn.visible {
@@ -255,10 +244,8 @@ svg.flower.open .petal {
 /* =========================================
    8. SCENE 4: SPECIAL FLOWER
    ========================================= */
-#scene-4 .flower-wrapper {
-    transform: scale(1.4);
-    margin: 40px 0;
-}
+#scene-4 .flower-wrapper { margin: 40px 0; }
+#scene-4 .scale-up { transform: scale(1.4); }
 
 .glow {
     position: absolute;
@@ -284,10 +271,7 @@ svg.flower.open .petal {
     transition: opacity 1.5s ease, transform 1.5s ease;
 }
 
-.special-message.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.special-message.visible { opacity: 1; transform: translateY(0); }
 
 /* =========================================
    9. SCENE 5: FINAL
@@ -305,15 +289,9 @@ svg.flower.open .petal {
     transition: opacity 1.5s ease, transform 1.5s ease;
 }
 
-.final-text.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.final-text.visible { opacity: 1; transform: translateY(0); }
 
-#final-2 {
-    font-size: 24px;
-    margin: 15px 0;
-}
+#final-2 { font-size: 24px; margin: 15px 0; }
 
 .because-yes {
     font-size: 13px;
