@@ -6,7 +6,7 @@ let discoveredCount = 0;
 const totalFlowers = 5;
 
 /* =========================================================================
-   DATOS DE LAS FLORES (Posicionamiento y prevención de superposición)
+   DATOS DE LAS FLORES 
    ========================================================================= */
 const gardenData = [
     {
@@ -41,7 +41,6 @@ const gardenData = [
         id: 5,
         phrase: "Y porque sí.",
         top: "84%", left: "50%",
-        // Garantizamos que no colisione con la 4 gracias al bottom: 100% y el margen
         textStyles: "bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 12px; text-align: center; white-space: nowrap;",
         delay: "-0.5s", scale: 1.05
     }
@@ -71,10 +70,9 @@ function showScene(sceneNumber) {
 }
 
 function setupEventListeners() {
-    // Escena 1 (Portada minimalista) -> Escena 2 (Revelación)
+    // Escena 1 -> Escena 2
     document.getElementById('btn-start').addEventListener('click', () => {
         showScene(2);
-        // La flor 2 se abre majestuosamente al entrar a la escena 2
         setTimeout(() => {
             const scene2Svg = document.querySelector('#scene-2-flower svg');
             if (scene2Svg) scene2Svg.classList.add('open');
@@ -239,7 +237,6 @@ function openSpecialFlower() {
     setTimeout(() => {
         document.getElementById('special-message').classList.add('visible');
         
-        // El botón "Continuar" aparece claramente después de 1.8s
         setTimeout(() => {
             document.getElementById('btn-final-scene').classList.add('visible');
         }, 1800);
@@ -251,29 +248,24 @@ function openSpecialFlower() {
    SECUENCIA FINAL CON RAMO PNG
    ========================================================================= */
 function startFinalSequence() {
-    // Momento 1: Aparece lentamente el ramo
     setTimeout(() => {
         document.getElementById('final-bouquet-img').classList.add('visible');
         
-        // Momento 2: Aparece "Así que... estas son para ti."
         setTimeout(() => {
             document.getElementById('final-1').classList.add('visible');
             
-            // Momento 3: "Feliz Día..."
             setTimeout(() => {
                 document.getElementById('final-2').classList.add('visible');
                 
-                // Momento 4: "Espero que te haya sacado una sonrisa."
                 setTimeout(() => {
                     document.getElementById('final-3').classList.add('visible');
                     
-                    // Momento 5: "Porque sí."
                     setTimeout(() => {
                         document.getElementById('final-4').classList.add('visible');
                     }, 3500);
 
                 }, 2500);
             }, 2500);
-        }, 2000); // Pausa para que el ramo luzca primero
-    }, 800); // Breve espera al entrar a la escena
+        }, 2000); 
+    }, 800); 
 }
