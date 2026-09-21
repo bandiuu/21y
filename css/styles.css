@@ -206,7 +206,7 @@ svg.flower.open .petal {
    ========================================= */
 .garden-narrative {
     position: absolute;
-    bottom: 5%; /* Se ancla al 5% inferior para asegurar que no se solape con la flor 5 */
+    bottom: 5%; 
     left: 0;
     width: 100%;
     display: flex;
