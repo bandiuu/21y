@@ -72,7 +72,6 @@ p { font-size: 15px; }
     pointer-events: none;
     transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: var(--z-background);
-    /* Permitir scroll interno solo si la pantalla es extremadamente pequeña, evita recortes */
     overflow-y: auto; 
     overflow-x: hidden;
 }
@@ -203,11 +202,11 @@ svg.flower.open .petal {
 }
 
 /* =========================================
-   7. TRANSICIÓN DEL JARDÍN (Corrección)
+   7. TRANSICIÓN DEL JARDÍN
    ========================================= */
 .garden-narrative {
     position: absolute;
-    bottom: 8%; /* Espacio seguro para no salir de la pantalla */
+    bottom: 5%; /* Se ancla al 5% inferior para asegurar que no se solape con la flor 5 */
     left: 0;
     width: 100%;
     display: flex;
@@ -215,11 +214,12 @@ svg.flower.open .petal {
     align-items: center;
     pointer-events: none;
     z-index: var(--z-overlay);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .narrative-text-container {
     position: relative;
-    height: 30px;
+    height: 25px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -244,10 +244,9 @@ svg.flower.open .petal {
     pointer-events: none;
     transform: translateY(10px);
     transition: opacity 1s ease, transform 1s ease;
-    margin-top: 25px; /* Crea el espacio sin romper el layout */
+    margin-top: 20px;
 }
 
-/* Al añadir la clase, el botón se vuelve opaco y táctil */
 .narrative-btn.visible {
     opacity: 1;
     pointer-events: auto;
