@@ -6,9 +6,7 @@ let discoveredCount = 0;
 const totalFlowers = 5;
 
 /* =========================================================================
-   DATOS DE LAS FLORES Y PREVENCIÓN DE SUPERPOSICIONES
-   Usamos un sistema de distribución vertical preciso y max-widths para 
-   garantizar que la frase 4 y 5 jamás se toquen ni sobresalgan.
+   DATOS DE LAS FLORES (Posicionamiento y prevención de superposición)
    ========================================================================= */
 const gardenData = [
     {
@@ -35,7 +33,7 @@ const gardenData = [
     {
         id: 4,
         phrase: "Porque algunas personas simplemente llaman la atención.",
-        top: "63%", right: "8%",
+        top: "62%", right: "8%",
         textStyles: "right: 100%; top: 5%; margin-right: 15px; text-align: right; width: 140px;",
         delay: "-1.5s", scale: 0.9
     },
@@ -43,8 +41,7 @@ const gardenData = [
         id: 5,
         phrase: "Y porque sí.",
         top: "84%", left: "50%",
-        // La frase 5 se posiciona arriba de la flor 5 de manera controlada. 
-        // Como la flor 4 está al 63%, queda espacio de sobra para evitar colisiones.
+        // Garantizamos que no colisione con la 4 gracias al bottom: 100% y el margen
         textStyles: "bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 12px; text-align: center; white-space: nowrap;",
         delay: "-0.5s", scale: 1.05
     }
@@ -62,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================================================
-   MANEJO DE ESCENAS Y FLUJO LIMPIO
+   MANEJO DE ESCENAS
    ========================================================================= */
 function showScene(sceneNumber) {
     document.querySelector('.scene.active').classList.remove('active');
@@ -74,38 +71,38 @@ function showScene(sceneNumber) {
 }
 
 function setupEventListeners() {
-    // Portada a Revelación
+    // Escena 1 (Portada minimalista) -> Escena 2 (Revelación)
     document.getElementById('btn-start').addEventListener('click', () => {
         showScene(2);
-        // La flor 2 se abre majestuosamente al entrar
+        // La flor 2 se abre majestuosamente al entrar a la escena 2
         setTimeout(() => {
             const scene2Svg = document.querySelector('#scene-2-flower svg');
             if (scene2Svg) scene2Svg.classList.add('open');
         }, 1200);
     });
 
-    // Revelación al Jardín
+    // Escena 2 -> Jardín
     document.getElementById('btn-enter-garden').addEventListener('click', () => {
         showScene(3);
     });
 
-    // Del Jardín a la Flor Especial
+    // Jardín completado -> Flor Especial
     document.getElementById('btn-next-special').addEventListener('click', () => {
         showScene(4);
     });
 
-    // De la Flor Especial al Final
+    // Flor Especial -> Final
     document.getElementById('btn-final-scene').addEventListener('click', () => {
         showScene(5);
         startFinalSequence();
     });
 
-    // Tocar la Flor Especial
+    // Interacción Flor Especial
     document.getElementById('special-flower-touch').addEventListener('click', openSpecialFlower);
 }
 
 /* =========================================================================
-   GENERACIÓN SVG
+   GENERACIÓN SVG (Flores)
    ========================================================================= */
 function createFlowerSVG(isOpen = false, isSpecial = false) {
     const openClass = isOpen ? ' open' : '';
@@ -139,12 +136,10 @@ function createFlowerSVG(isOpen = false, isSpecial = false) {
 }
 
 function renderScene1Flower() {
-    // Flor presente desde el inicio pero cerrada
     document.getElementById('scene-1-flower').innerHTML = createFlowerSVG(false, false);
 }
 
 function renderScene2Flower() {
-    // Se inserta cerrada y se abrirá por evento CSS
     document.getElementById('scene-2-flower').innerHTML = createFlowerSVG(false, false);
 }
 
@@ -156,7 +151,7 @@ function renderSpecialFlower() {
 }
 
 /* =========================================================================
-   LÓGICA DEL JARDÍN Y PREVENCIÓN DE SUPERPOSICIONES
+   LÓGICA DEL JARDÍN
    ========================================================================= */
 function renderGardenFlowers() {
     const gardenArea = document.getElementById('garden-area');
@@ -244,33 +239,41 @@ function openSpecialFlower() {
     setTimeout(() => {
         document.getElementById('special-message').classList.add('visible');
         
+        // El botón "Continuar" aparece claramente después de 1.8s
         setTimeout(() => {
-            const btn = document.getElementById('btn-final-scene');
-            btn.style.opacity = '1';
-            btn.style.pointerEvents = 'auto';
-        }, 2000);
+            document.getElementById('btn-final-scene').classList.add('visible');
+        }, 1800);
 
     }, 1200);
 }
 
 /* =========================================================================
-   SECUENCIA FINAL
+   SECUENCIA FINAL CON RAMO PNG
    ========================================================================= */
 function startFinalSequence() {
+    // Momento 1: Aparece lentamente el ramo
     setTimeout(() => {
-        document.getElementById('final-1').classList.add('visible');
+        document.getElementById('final-bouquet-img').classList.add('visible');
         
+        // Momento 2: Aparece "Así que... estas son para ti."
         setTimeout(() => {
-            document.getElementById('final-2').classList.add('visible');
+            document.getElementById('final-1').classList.add('visible');
             
+            // Momento 3: "Feliz Día..."
             setTimeout(() => {
-                document.getElementById('final-3').classList.add('visible');
+                document.getElementById('final-2').classList.add('visible');
                 
+                // Momento 4: "Espero que te haya sacado una sonrisa."
                 setTimeout(() => {
-                    document.getElementById('final-4').classList.add('visible');
-                }, 3500);
+                    document.getElementById('final-3').classList.add('visible');
+                    
+                    // Momento 5: "Porque sí."
+                    setTimeout(() => {
+                        document.getElementById('final-4').classList.add('visible');
+                    }, 3500);
 
+                }, 2500);
             }, 2500);
-        }, 2500);
-    }, 1000);
+        }, 2000); // Pausa para que el ramo luzca primero
+    }, 800); // Breve espera al entrar a la escena
 }
