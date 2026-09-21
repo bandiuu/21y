@@ -145,7 +145,7 @@ svg.flower.open .petal {
    6. SCENE 3: GARDEN
    ========================================= */
 .garden-header {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     z-index: var(--z-ui);
 }
 
@@ -162,6 +162,8 @@ svg.flower.open .petal {
     flex-grow: 1;
     max-width: 420px;
     margin: 0 auto;
+    /* BLINDAJE: El jardín nunca invadirá los últimos 140px de la pantalla */
+    margin-bottom: 140px; 
 }
 
 .garden-item {
@@ -206,7 +208,9 @@ svg.flower.open .petal {
    ========================================= */
 .garden-narrative {
     position: absolute;
-    bottom: 5%; 
+    /* Forzado al fondo de forma segura */
+    bottom: 25px;
+    padding-bottom: env(safe-area-inset-bottom);
     left: 0;
     width: 100%;
     display: flex;
@@ -214,7 +218,6 @@ svg.flower.open .petal {
     align-items: center;
     pointer-events: none;
     z-index: var(--z-overlay);
-    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .narrative-text-container {
