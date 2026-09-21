@@ -6,39 +6,36 @@ let discoveredCount = 0;
 const totalFlowers = 5;
 
 /* =========================================================================
-   DATOS DE LAS FLORES (Corrección definitiva de superposición)
-   Se ha modificado la Flor 5 para que su texto aparezca por DEBAJO de
-   la flor en lugar de por encima. Así, nunca colisionará con la Flor 4.
+   DATOS DE LAS FLORES
    ========================================================================= */
 const gardenData = [
     {
         id: 1, phrase: "Por tu sonrisa.",
-        top: "5%", left: "10%",
+        top: "7%", left: "12%",
         textStyles: "left: 100%; top: 20%; margin-left: 15px; text-align: left; width: max-content;",
         delay: "0s", scale: 0.95
     },
     {
         id: 2, phrase: "Por esa energía que tienes.",
-        top: "19%", right: "10%",
+        top: "21%", right: "12%",
         textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right; width: max-content;",
         delay: "-1s", scale: 1
     },
     {
         id: 3, phrase: "Porque me pareciste increíble desde que empezamos a hablar.",
-        top: "33%", left: "8%",
+        top: "35%", left: "8%",
         textStyles: "left: 100%; top: 0%; margin-left: 15px; text-align: left; width: 145px;",
         delay: "-2.5s", scale: 0.85
     },
     {
         id: 4, phrase: "Porque algunas personas simplemente llaman la atención.",
-        top: "48%", right: "8%",
+        top: "49%", right: "8%",
         textStyles: "right: 100%; top: 0%; margin-right: 15px; text-align: right; width: 140px;",
         delay: "-1.5s", scale: 0.9
     },
     {
         id: 5, phrase: "Y porque sí.",
-        top: "63%", left: "50%",
-        // Cambio clave: 'top: 100%' hace que el texto aparezca por debajo de la flor.
+        top: "64%", left: "50%",
         textStyles: "top: 100%; left: 50%; transform: translateX(-50%); margin-top: 15px; text-align: center; white-space: nowrap;",
         delay: "-0.5s", scale: 1.05
     }
@@ -68,7 +65,6 @@ function showScene(sceneNumber) {
 }
 
 function setupEventListeners() {
-    // Escena 1 -> Escena 2
     document.getElementById('btn-start').addEventListener('click', () => {
         showScene(2);
         setTimeout(() => {
@@ -77,33 +73,34 @@ function setupEventListeners() {
         }, 1200);
     });
 
-    // Escena 2 -> Jardín
     document.getElementById('btn-enter-garden').addEventListener('click', () => {
         showScene(3);
     });
 
-    // Jardín completado -> Flor Especial
     document.getElementById('btn-next-special').addEventListener('click', () => {
         showScene(4);
     });
 
-    // Flor Especial ("Continuar") -> Final
     document.getElementById('btn-final-scene').addEventListener('click', () => {
         showScene(5);
         startFinalSequence();
     });
 
-    // Interacción Flor Especial
     document.getElementById('special-flower-touch').addEventListener('click', openSpecialFlower);
 }
 
 /* =========================================================================
-   GENERACIÓN SVG (Flores)
+   GENERACIÓN SVG CON FALLBACKS DE COLOR Y TAMAÑO
+   (Para evitar renderizados negros/gigantes si falla la conexión)
    ========================================================================= */
 function createFlowerSVG(isOpen = false, isSpecial = false) {
     const openClass = isOpen ? ' open' : '';
-    const centerColor = isSpecial ? 'var(--yellow-dark)' : '#EAB308';
-    const petalColor = isSpecial ? 'var(--yellow-deep)' : 'var(--yellow-soft)';
+    
+    // Colores con respaldo explícito (#hex) en caso de que el CSS tarde en cargar
+    const centerColor = isSpecial ? 'var(--yellow-dark, #D97706)' : '#EAB308';
+    const petalColor = isSpecial ? 'var(--yellow-deep, #EAB308)' : 'var(--yellow-soft, #FDE047)';
+    const stemColor = 'var(--olive-light, #879671)';
+    const leafColor = 'var(--olive-dark, #6B7B54)';
     
     const numPetals = isSpecial ? 10 : 7;
     let petalsHTML = '';
@@ -118,11 +115,12 @@ function createFlowerSVG(isOpen = false, isSpecial = false) {
         `;
     }
 
+    // El ancho y alto en la etiqueta garantizan un tamaño prudente temporal
     return `
-        <svg class="flower${openClass}" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50,40 Q45,75 52,105" stroke="var(--olive-light)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <path d="M51,75 Q35,65 40,50 Q50,60 51,75" fill="var(--olive-dark)"/>
-            <path d="M51,85 Q65,80 60,65 Q50,75 51,85" fill="var(--olive-dark)"/>
+        <svg class="flower${openClass}" viewBox="0 0 100 110" width="60" height="90" style="max-width: 100%;" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,40 Q45,75 52,105" stroke="${stemColor}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M51,75 Q35,65 40,50 Q50,60 51,75" fill="${leafColor}"/>
+            <path d="M51,85 Q65,80 60,65 Q50,75 51,85" fill="${leafColor}"/>
             <g class="petal-group">
                 ${petalsHTML}
             </g>
@@ -229,7 +227,6 @@ function openSpecialFlower() {
     setTimeout(() => {
         document.getElementById('special-message').classList.add('visible');
         
-        // Aparece "Continuar" claramente de forma táctil y visible
         setTimeout(() => {
             document.getElementById('btn-final-scene').classList.add('visible');
         }, 1500);
