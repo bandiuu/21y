@@ -72,6 +72,9 @@ p { font-size: 15px; }
     pointer-events: none;
     transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: var(--z-background);
+    /* Permitir scroll interno solo si la pantalla es extremadamente pequeña, evita recortes */
+    overflow-y: auto; 
+    overflow-x: hidden;
 }
 
 .scene.active {
@@ -81,7 +84,7 @@ p { font-size: 15px; }
 }
 
 /* =========================================
-   4. BUTTONS
+   4. BUTTONS GLOBALES
    ========================================= */
 .btn {
     margin-top: 35px;
@@ -101,20 +104,6 @@ p { font-size: 15px; }
 .btn:active {
     background: rgba(44, 44, 40, 0.05);
     transform: scale(0.96);
-}
-
-.continue-btn {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(10px);
-    transition: opacity 1s ease, transform 1s ease;
-    margin-top: 30px;
-}
-
-.continue-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
 }
 
 /* =========================================
@@ -214,19 +203,15 @@ svg.flower.open .petal {
 }
 
 /* =========================================
-   7. GARDEN NARRATIVE (Transitions)
-   CORRECCIÓN DEL CONTENEDOR FINAL DEL JARDÍN
+   7. TRANSICIÓN DEL JARDÍN (Corrección)
    ========================================= */
 .garden-narrative {
     position: absolute;
-    bottom: 0;
+    bottom: 8%; /* Espacio seguro para no salir de la pantalla */
     left: 0;
     width: 100%;
-    height: 25vh; /* Ocupa el 25% inferior de la pantalla */
-    min-height: 140px; 
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     pointer-events: none;
     z-index: var(--z-overlay);
@@ -234,8 +219,8 @@ svg.flower.open .petal {
 
 .narrative-text-container {
     position: relative;
-    width: 100%;
     height: 30px;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -249,7 +234,6 @@ svg.flower.open .petal {
     transition: opacity 1.2s ease, transform 1.2s ease;
     text-align: center;
     width: 100%;
-    /* Sombra fuerte para mantener excelente legibilidad sin ensuciar el jardín */
     text-shadow: 0 2px 10px var(--cream), 0 -2px 10px var(--cream), 2px 0 10px var(--cream), -2px 0 10px var(--cream);
 }
 
@@ -260,9 +244,10 @@ svg.flower.open .petal {
     pointer-events: none;
     transform: translateY(10px);
     transition: opacity 1s ease, transform 1s ease;
-    margin-top: 25px; /* Separación clara y garantizada debajo del texto */
+    margin-top: 25px; /* Crea el espacio sin romper el layout */
 }
 
+/* Al añadir la clase, el botón se vuelve opaco y táctil */
 .narrative-btn.visible {
     opacity: 1;
     pointer-events: auto;
@@ -270,7 +255,7 @@ svg.flower.open .petal {
 }
 
 /* =========================================
-   8. SCENE 4: SPECIAL FLOWER
+   8. SCENE 4: SPECIAL FLOWER & CONTINUAR
    ========================================= */
 #scene-4 .flower-wrapper { margin: 40px 0; }
 #scene-4 .scale-up { transform: scale(1.4); }
@@ -293,13 +278,36 @@ svg.flower.open .petal {
     transform: translate(-50%, -50%) scale(1);
 }
 
+.special-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
 .special-message {
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 1.5s ease, transform 1.5s ease;
+    margin: 0;
 }
 
 .special-message.visible { opacity: 1; transform: translateY(0); }
+
+.continue-btn {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 1s ease, transform 1s ease;
+    margin-top: 25px;
+}
+
+.continue-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
 
 /* =========================================
    9. SCENE 5: FINAL CON RAMO PNG
