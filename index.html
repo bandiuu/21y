@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para ti 🌼</title>
+    
+    <!-- Tipografías elegantes y editoriales -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Paleta de colores editorial y cálida */
+            --bg-cream: #FCFBF8;
+            --text-dark: #2C2C28;
+            --text-light: #5A5A55;
+            --stem-green: #879671;
+            --leaf-green: #7A8964;
+            --petal-soft: #FDE047;
+            --petal-deep: #EAB308;
+            --flower-center: #D97706;
+            --glow: rgba(234, 179, 8, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Evita scroll accidental en móvil */
+            overscroll-behavior: none;
+        }
+
+        /* Contenedor principal ajustado al viewport real del móvil */
+        #app {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* Tipografía */
+        h1, h2, .serif {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
+
+        /* Sistema de Escenas */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .scene.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Botones sutiles */
+        .btn {
+            margin-top: 40px;
+            padding: 12px 28px;
+            background: transparent;
+            border: 1px solid rgba(44, 44, 40, 0.2);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeUp 1s 1.5s forwards ease-out;
+        }
+
+        .btn:active {
+            background: rgba(44, 44, 40, 0.05);
+            transform: scale(0.98);
+        }
+
+        /* Textos Generales */
+        .intro-text {
+            font-size: 22px;
+            margin-top: 30px;
+            color: var(--text-dark);
+        }
+        
+        .small-text {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 15px;
+        }
+
+        /* --- FLORES SVG --- */
+        .flower-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: sway 5s infinite ease-in-out alternate;
+        }
+
+        svg.flower {
+            width: 80px;
+            height: 120px;
+            overflow: visible;
+        }
+
+        .petal-group {
+            transform-origin: 50px 30px;
+        }
+
+        /* Estado inicial: pétalos cerrados/pequeños */
+        .petal {
+            transform-origin: 50px 30px;
+            transform: scale(0.1);
+            opacity: 0;
+            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        opacity 0.8s ease-out;
+        }
+
+        .flower.open .petal {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* --- ESCENA 3: EL JARDÍN --- */
+        #scene-3 {
+            justify-content: flex-start;
+            padding-top: 8vh;
+        }
+
+        .garden-header {
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+
+        .garden-title {
+            font-size: 20px;
+            color: var(--text-dark);
+        }
+
+        .garden-subtitle {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 5px;
+            font-weight: 300;
+        }
+
+        .garden-progress {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 15px;
+            letter-spacing: 2px;
+            opacity: 0.6;
+        }
+
+        #garden-area {
+            position: relative;
+            width: 100%;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        /* Contenedor individual de cada flor en el jardín */
+        .garden-item {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Área táctil invisible para facilitar el toque en móvil (min 50x50) */
+        .touch-area {
+            position: absolute;
+            width: 70px;
+            height: 90px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        /* Frases de las flores */
+        .flower-phrase {
+            position: absolute;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 16px;
+            line-height: 1.4;
+            color: var(--text-dark);
+            width: max-content;
+            max-width: 160px; /* Evita que salgan de la pantalla en móvil */
+            opacity: 0;
+            transform: translateY(5px);
+            transition: opacity 1s ease, transform 1s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .garden-item.discovered .flower-phrase {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mensajes narrativos dentro del jardín (al finalizar) */
+        .garden-narrative {
+            position: absolute;
+            bottom: 15%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 18px;
+            font-family: 'Playfair Display', serif;
+            color: var(--text-dark);
+            z-index: 20;
+        }
+
+        .narrative-line {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+        }
+        .narrative-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- ESCENA 4: LA ÚLTIMA FLOR --- */
+        .special-flower-wrapper {
+            position: relative;
+            transform: scale(1.3);
+            margin-bottom: 30px;
+        }
+
+        .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            transform: translate(-50%, -50%) scale(0.5);
+            background: radial-gradient(circle, var(--glow) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 2s ease, transform 2s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .special-flower-wrapper.open .glow {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #special-message {
+            font-size: 22px;
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+        }
+
+        /* --- ESCENA 5: FINAL --- */
+        .bouquet {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            transform: scale(0.9);
+        }
+        
+        .bouquet .flower-wrapper:nth-child(1) { transform: rotate(-15deg) translateY(10px); }
+        .bouquet .flower-wrapper:nth-child(2) { transform: scale(1.1) translateY(-10px); z-index: 2; }
+        .bouquet .flower-wrapper:nth-child(3) { transform: rotate(15deg) translateY(10px); }
+
+        .final-sequence div {
+            font-size: 18px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+        }
+
+        .final-sequence .final-title {
+            font-size: 24px;
+            color: var(--petal-deep);
+            margin-bottom: 30px;
+        }
+
+        .final-sequence .because-yes {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-top: 40px;
+            transition-duration: 3s; /* Aparición extra lenta */
+        }
+
+        /* Keyframes */
+        @keyframes sway {
+            0% { transform: rotate(-3deg); }
+            100% { transform: rotate(3deg); }
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+
+    <!-- ESCENA 1: INTRO -->
+    <div id="scene-1" class="scene active">
+        <div class="flower-wrapper" id="intro-flower-wrapper">
+            <!-- SVG Flor generada por JS -->
+        </div>
+        <h1 class="intro-text serif">Tengo algo para ti.</h1>
+        <div class="small-text">🌼</div>
+        <button class="btn" onclick="startExperience()">Descubrir</button>
+    </div>
+
+    <!-- ESCENA 2: INTRODUCCIÓN -->
+    <div id="scene-2" class="scene">
+        <div class="flower-wrapper">
+            <div id="intro-flower-open"></div>
+        </div>
+        <h1 class="intro-text serif">Hay algunas cosas<br>que quería decirte.</h1>
+        <button class="btn" onclick="goToGarden()">Descubrir</button>
+    </div>
+
+    <!-- ESCENA 3: EL JARDÍN -->
+    <div id="scene-3" class="scene">
+        <div class="garden-header">
+            <h2 class="garden-title">Hay 5 flores para ti.</h2>
+            <div class="garden-subtitle">Toca cada una suavemente.</div>
+            <div class="garden-progress" id="progress-text">0 / 5</div>
+        </div>
+        
+        <div id="garden-area">
+            <!-- Las flores se inyectan aquí con JS para controlar posiciones exactas -->
+        </div>
+
+        <div class="garden-narrative">
+            <div id="narrative-1" class="narrative-line">Creo que ya encontraste todas...</div>
+            <div id="narrative-2" class="narrative-line">Aunque...</div>
+            <div id="narrative-3" class="narrative-line">todavía falta una.</div>
+        </div>
+    </div>
+
+    <!-- ESCENA 4: LA ÚLTIMA FLOR -->
+    <div id="scene-4" class="scene">
+        <p class="small-text" style="margin-bottom: 40px; letter-spacing: 2px; text-transform: uppercase;">Esta es diferente</p>
+        
+        <div class="special-flower-wrapper" id="special-flower-container">
+            <div class="glow"></div>
+            <!-- Flor especial inyectada por JS -->
+            <div class="touch-area" style="width: 100px; height: 120px;" onclick="openSpecialFlower()"></div>
+        </div>
+        
+        <h2 id="special-message" class="serif">Esta es simplemente para ti. 🌼</h2>
+    </div>
+
+    <!-- ESCENA 5: FINAL -->
+    <div id="scene-5" class="scene">
+        <div class="bouquet" id="final-bouquet">
+            <!-- 3 flores abiertas -->
+        </div>
+        <div class="final-sequence serif">
+            <div id="final-1">Así que... estas son para ti. 🌼</div>
+            <div id="final-2" class="final-title">Feliz Día de las Flores Amarillas.</div>
+            <div id="final-3">Espero que te haya sacado una sonrisa.</div>
+            <div id="final-4" class="because-yes">Porque sí.</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* =========================================================================
+       GENERADOR DE FLORES SVG
+       Crearemos un SVG limpio y animable por CSS.
+       ========================================================================= */
+    
+    function createFlowerSVG(isOpen = false, isSpecial = false) {
+        const openClass = isOpen ? ' open' : '';
+        const centerColor = isSpecial ? 'var(--flower-center)' : '#EAB308';
+        const petalColor = isSpecial ? 'var(--petal-deep)' : 'var(--petal-soft)';
+        
+        // Generamos pétalos rotados.
+        // La flor especial tiene más pétalos.
+        const numPetals = isSpecial ? 12 : 8;
+        let petalsHTML = '';
+        for (let i = 0; i < numPetals; i++) {
+            const angle = (360 / numPetals) * i;
+            // Retraso aleatorio sutil para que los pétalos no se abran todos exactamente al mismo milisegundo
+            const delay = (Math.random() * 0.4).toFixed(2);
+            petalsHTML += `
+                <g transform="rotate(${angle} 50 30)">
+                    <ellipse class="petal" cx="50" cy="10" rx="9" ry="22" fill="${petalColor}" style="transition-delay: ${delay}s"/>
+                </g>
+            `;
+        }
+
+        return `
+            <svg class="flower${openClass}" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <!-- Tallo orgánico -->
+                <path d="M50,40 Q45,80 50,115" stroke="var(--stem-green)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <!-- Hojas -->
+                <path d="M50,80 Q35,70 40,55 Q50,65 50,80" fill="var(--leaf-green)"/>
+                <path d="M50,90 Q65,85 60,70 Q50,80 50,90" fill="var(--leaf-green)"/>
+                
+                <!-- Pétalos -->
+                <g class="petal-group">
+                    ${petalsHTML}
+                </g>
+                
+                <!-- Centro -->
+                <circle cx="50" cy="30" r="7" fill="${centerColor}" />
+            </svg>
+        `;
+    }
+
+    /* =========================================================================
+       DATOS DEL JARDÍN (ESCENA 3)
+       Mapeo exacto para pantallas verticales (Mobile First).
+       ========================================================================= */
+    
+    const gardenData = [
+        {
+            id: 1,
+            phrase: "Por tu sonrisa.",
+            // Posición de la flor en % respecto al contenedor
+            top: "10%", left: "20%",
+            // Posición del texto respecto al centro de la flor
+            textPos: "left: 100%; top: 30%; margin-left: 15px;",
+            textAlign: "left",
+            delay: "0s", scale: 0.9
+        },
+        {
+            id: 2,
+            phrase: "Por esa energía que tienes.",
+            top: "28%", left: "75%",
+            textPos: "right: 100%; top: 30%; margin-right: 15px;",
+            textAlign: "right",
+            delay: "-1s", scale: 1
+        },
+        {
+            id: 3,
+            phrase: "Porque me pareciste increíble desde que empezamos a hablar.",
+            top: "50%", left: "22%",
+            textPos: "left: 100%; top: 10%; margin-left: 15px; width: 180px;",
+            textAlign: "left",
+            delay: "-2s", scale: 0.85
+        },
+        {
+            id: 4,
+            phrase: "Porque algunas personas simplemente llaman la atención.",
+            top: "70%", left: "80%",
+            textPos: "right: 100%; top: 10%; margin-right: 15px; width: 150px;",
+            textAlign: "right",
+            delay: "-3.5s", scale: 0.95
+        },
+        {
+            id: 5,
+            phrase: "Y porque sí.",
+            top: "88%", left: "50%",
+            textPos: "top: -30px; left: 50%; transform: translate(-50%, -100%);",
+            textAlign: "center",
+            delay: "-1.5s", scale: 1.1
+        }
+    ];
+
+    let discoveredCount = 0;
+    const totalFlowers = gardenData.length;
+
+    /* =========================================================================
+       INICIALIZACIÓN E INTERACCIÓN
+       ========================================================================= */
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Preparar flor inicial
+        document.getElementById('intro-flower-wrapper').innerHTML = createFlowerSVG(false);
+        // Preparar flor de escena 2 (abierta)
+        document.getElementById('intro-flower-open').innerHTML = createFlowerSVG(true);
+        // Preparar flor especial (escena 4)
+        document.getElementById('special-flower-container').innerHTML += createFlowerSVG(false, true);
+        
+        // Construir el Jardín
+        buildGarden();
+    });
+
+    function changeScene(fromId, toId) {
+        document.getElementById(fromId).classList.remove('active');
+        setTimeout(() => {
+            document.getElementById(toId).classList.add('active');
+        }, 1200); // Tiempo para que la pantalla quede limpia antes de mostrar la siguiente
+    }
+
+    // De Escena 1 a Escena 2
+    function startExperience() {
+        // Abrir la flor inicial
+        const svg = document.querySelector('#intro-flower-wrapper svg');
+        svg.classList.add('open');
+        
+        // Ocultar textos
+        document.querySelector('#scene-1 h1').style.opacity = '0';
+        document.querySelector('#scene-1 .small-text').style.opacity = '0';
+        document.querySelector('#scene-1 .btn').style.opacity = '0';
+
+        // Cambiar escena
+        setTimeout(() => {
+            changeScene('scene-1', 'scene-2');
+        }, 1500);
+    }
+
+    // De Escena 2 a Escena 3 (El Jardín)
+    function goToGarden() {
+        changeScene('scene-2', 'scene-3');
+    }
+
+    function buildGarden() {
+        const area = document.getElementById('garden-area');
+        
+        gardenData.forEach(flower => {
+            const item = document.createElement('div');
+            item.className = 'garden-item';
+            // Posición y animación orgánica
+            item.style.top = flower.top;
+            item.style.left = flower.left;
+            item.style.transform = `translate(-50%, -50%) scale(${flower.scale})`;
+            item.style.animationDelay = flower.delay;
+            
+            // Contenido: SVG, Frase y Área táctil
+            item.innerHTML = `
+                <div class="flower-wrapper" style="animation-delay: ${flower.delay}">
+                    ${createFlowerSVG(false)}
+                </div>
+                <div class="flower-phrase" style="${flower.textPos} text-align: ${flower.textAlign};">
+                    ${flower.phrase}
+                </div>
+                <div class="touch-area" onclick="discoverFlower(this, ${flower.id})"></div>
+            `;
+            
+            area.appendChild(item);
+        });
+    }
+
+    function discoverFlower(touchElement, id) {
+        const item = touchElement.parentElement;
+        
+        // Si ya fue descubierta, ignorar
+        if (item.classList.contains('discovered')) return;
+
+        // Marcar como descubierta
+        item.classList.add('discovered');
+        
+        // Abrir SVG
+        const svg = item.querySelector('svg');
+        svg.classList.add('open');
+
+        // Actualizar progreso
+        discoveredCount++;
+        document.getElementById('progress-text').innerText = `${discoveredCount} / ${totalFlowers}`;
+
+        // Evaluar fin del jardín
+        if (discoveredCount === totalFlowers) {
+            triggerGardenCompletion();
+        }
+    }
+
+    function triggerGardenCompletion() {
+        // Esperamos un momento para que la persona lea la última frase
+        setTimeout(() => {
+            const n1 = document.getElementById('narrative-1');
+            const n2 = document.getElementById('narrative-2');
+            const n3 = document.getElementById('narrative-3');
+            
+            // Secuencia narrativa en el mismo jardín
+            n1.classList.add('visible');
+            
+            setTimeout(() => {
+                n1.classList.remove('visible');
+                n2.classList.add('visible');
+                
+                setTimeout(() => {
+                    n2.classList.remove('visible');
+                    n3.classList.add('visible');
+                    
+                    // Transición a la flor final
+                    setTimeout(() => {
+                        n3.classList.remove('visible');
+                        changeScene('scene-3', 'scene-4');
+                    }, 3500);
+
+                }, 3000);
+            }, 3500);
+
+        }, 2000);
+    }
+
+    // Interacción de la última flor (Escena 4)
+    function openSpecialFlower() {
+        const wrapper = document.getElementById('special-flower-container');
+        if (wrapper.classList.contains('open')) return; // Evitar doble toque
+
+        wrapper.classList.add('open');
+        const svg = wrapper.querySelector('svg');
+        svg.classList.add('open');
+
+        // Mostrar el mensaje emocional principal
+        setTimeout(() => {
+            document.getElementById('special-message').style.opacity = '1';
+            document.getElementById('special-message').style.transform = 'translateY(0)';
+            
+            // Pasar a la escena final
+            setTimeout(() => {
+                startFinalSequence();
+            }, 4500);
+
+        }, 1500);
+    }
+
+    // Secuencia Final (Escena 5)
+    function startFinalSequence() {
+        // Preparar el bouquet final
+        const bouquet = document.getElementById('final-bouquet');
+        bouquet.innerHTML = createFlowerSVG(true) + createFlowerSVG(true) + createFlowerSVG(true);
+        
+        changeScene('scene-4', 'scene-5');
+
+        // Orquestar aparición de textos con ritmo pausado y natural
+        setTimeout(() => {
+            document.getElementById('final-1').style.opacity = '1';
+            document.getElementById('final-1').style.transform = 'translateY(0)';
+            
+            setTimeout(() => {
+                document.getElementById('final-2').style.opacity = '1';
+                document.getElementById('final-2').style.transform = 'translateY(0)';
+                
+                setTimeout(() => {
+                    document.getElementById('final-3').style.opacity = '1';
+                    document.getElementById('final-3').style.transform = 'translateY(0)';
+                    
+                    setTimeout(() => {
+                        // El último detalle, muy lento
+                        document.getElementById('final-4').style.opacity = '1';
+                        document.getElementById('final-4').style.transform = 'translateY(0)';
+                    }, 4000);
+
+                }, 3000);
+            }, 3000);
+        }, 1500); // Esperar a que la escena 5 sea visible
+    }
+
+</script>
+
+</body>
+</html>
