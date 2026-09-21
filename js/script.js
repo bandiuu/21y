@@ -6,39 +6,39 @@ let discoveredCount = 0;
 const totalFlowers = 5;
 
 /* =========================================================================
-   DATOS DE LAS FLORES (Corrección Total iOS)
-   - La frase 5 se renderiza a la IZQUIERDA (right: 100%) como lo pediste.
-   - Las alturas (top) tienen un espaciado matemático exacto para no tocarse.
+   DATOS DE LAS FLORES (Distribución espaciada)
+   Ahora tienen una separación vertical exacta del 20% entre cada una,
+   lo que les da mucho espacio para respirar sin verse apretadas.
    ========================================================================= */
 const gardenData = [
     {
         id: 1, phrase: "Por tu sonrisa.",
-        top: "2%", left: "10%",
+        top: "8%", left: "10%",
         textStyles: "left: 100%; top: 20%; margin-left: 15px; text-align: left; width: max-content;",
         delay: "0s", scale: 0.95
     },
     {
         id: 2, phrase: "Por esa energía que tienes.",
-        top: "18%", right: "10%",
+        top: "28%", right: "10%",
         textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right; width: max-content;",
         delay: "-1s", scale: 1
     },
     {
         id: 3, phrase: "Porque me pareciste increíble desde que empezamos a hablar.",
-        top: "34%", left: "8%",
+        top: "48%", left: "8%",
         textStyles: "left: 100%; top: 5%; margin-left: 15px; text-align: left; width: 140px;",
         delay: "-2.5s", scale: 0.85
     },
     {
         id: 4, phrase: "Porque algunas personas simplemente llaman la atención.",
-        top: "50%", right: "8%",
+        top: "68%", right: "8%",
         textStyles: "right: 100%; top: 5%; margin-right: 15px; text-align: right; width: 135px;",
         delay: "-1.5s", scale: 0.9
     },
     {
         id: 5, phrase: "Y porque sí.",
-        top: "68%", left: "55%", 
-        // SOLUCIÓN: texto posicionado estrictamente a la izquierda de la flor 5
+        top: "88%", left: "55%", 
+        // El texto se mantiene seguro a la izquierda
         textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right; white-space: nowrap;",
         delay: "-0.5s", scale: 1.05
     }
