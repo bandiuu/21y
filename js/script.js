@@ -6,38 +6,38 @@ let discoveredCount = 0;
 const totalFlowers = 5;
 
 /* =========================================================================
-   DATOS DE LAS FLORES (Posicionamiento calibrado)
-   Se ajustaron las alturas para garantizar que la transición final y su
-   botón nunca se solapen con las flores ni queden fuera del viewport.
+   DATOS DE LAS FLORES (Posicionamiento calibrado para evitar choques)
+   Se ha reducido la distribución vertical al top 64% de la pantalla,
+   dejando completamente libre la zona inferior para los textos y botón.
    ========================================================================= */
 const gardenData = [
     {
         id: 1, phrase: "Por tu sonrisa.",
-        top: "10%", left: "12%",
+        top: "7%", left: "12%",
         textStyles: "left: 100%; top: 20%; margin-left: 15px; text-align: left; width: max-content;",
         delay: "0s", scale: 0.95
     },
     {
         id: 2, phrase: "Por esa energía que tienes.",
-        top: "25%", right: "12%",
+        top: "21%", right: "12%",
         textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right; width: max-content;",
         delay: "-1s", scale: 1
     },
     {
         id: 3, phrase: "Porque me pareciste increíble desde que empezamos a hablar.",
-        top: "42%", left: "8%",
+        top: "35%", left: "8%",
         textStyles: "left: 100%; top: 5%; margin-left: 15px; text-align: left; width: 145px;",
         delay: "-2.5s", scale: 0.85
     },
     {
         id: 4, phrase: "Porque algunas personas simplemente llaman la atención.",
-        top: "56%", right: "8%",
+        top: "49%", right: "8%",
         textStyles: "right: 100%; top: 5%; margin-right: 15px; text-align: right; width: 140px;",
         delay: "-1.5s", scale: 0.9
     },
     {
         id: 5, phrase: "Y porque sí.",
-        top: "75%", left: "50%",
+        top: "64%", left: "50%",
         textStyles: "bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 12px; text-align: center; white-space: nowrap;",
         delay: "-0.5s", scale: 1.05
     }
@@ -206,7 +206,7 @@ function showGardenCompletion() {
                 n3.classList.add('visible');
                 
                 setTimeout(() => {
-                    // El botón ahora aparece limpiamente sobre el espacio reservado
+                    // Aparece el botón de manera clara y funcional
                     btn.classList.add('visible');
                 }, 1500);
 
@@ -241,23 +241,18 @@ function openSpecialFlower() {
    SECUENCIA FINAL CON RAMO PNG
    ========================================================================= */
 function startFinalSequence() {
-    // Momento 1: Aparece el ramo suavemente
     setTimeout(() => {
         document.getElementById('final-bouquet-img').classList.add('visible');
         
-        // Momento 2: Aparece "Así que... estas son para ti."
         setTimeout(() => {
             document.getElementById('final-1').classList.add('visible');
             
-            // Momento 3: "Feliz Día..."
             setTimeout(() => {
                 document.getElementById('final-2').classList.add('visible');
                 
-                // Momento 4: "Espero que te haya sacado una sonrisa."
                 setTimeout(() => {
                     document.getElementById('final-3').classList.add('visible');
                     
-                    // Momento 5: "Porque sí."
                     setTimeout(() => {
                         document.getElementById('final-4').classList.add('visible');
                     }, 3500);
