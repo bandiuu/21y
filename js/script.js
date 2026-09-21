@@ -1,0 +1,287 @@
+/* =========================================================================
+   ESTADO GLOBAL
+   ========================================================================= */
+let currentScene = 1;
+let discoveredCount = 0;
+const totalFlowers = 5;
+
+/* =========================================================================
+   DATOS DE LAS FLORES (Posiciones relativas para Responsive Mobile-First)
+   ========================================================================= */
+const gardenData = [
+    {
+        id: 1,
+        phrase: "Por tu sonrisa.",
+        top: "8%", left: "15%",
+        textStyles: "left: 100%; top: 20%; margin-left: 15px; text-align: left;",
+        delay: "0s", scale: 0.95
+    },
+    {
+        id: 2,
+        phrase: "Por esa energía que tienes.",
+        top: "26%", right: "15%",
+        textStyles: "right: 100%; top: 20%; margin-right: 15px; text-align: right;",
+        delay: "-1s", scale: 1
+    },
+    {
+        id: 3,
+        phrase: "Porque me pareciste increíble desde que empezamos a hablar.",
+        top: "48%", left: "10%",
+        // Limitamos el ancho para que no desborde en pantallas angostas
+        textStyles: "left: 100%; top: 0%; margin-left: 15px; text-align: left; max-width: 160px;",
+        delay: "-2.5s", scale: 0.85
+    },
+    {
+        id: 4,
+        phrase: "Porque algunas personas simplemente llaman la atención.",
+        top: "68%", right: "10%",
+        textStyles: "right: 100%; top: 0%; margin-right: 15px; text-align: right; max-width: 150px;",
+        delay: "-1.5s", scale: 0.9
+    },
+    {
+        id: 5,
+        phrase: "Y porque sí.",
+        bottom: "8%", left: "50%",
+        textStyles: "bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 20px; text-align: center; white-space: nowrap;",
+        delay: "-0.5s", scale: 1.05
+    }
+];
+
+/* =========================================================================
+   INICIALIZACIÓN
+   ========================================================================= */
+document.addEventListener("DOMContentLoaded", () => {
+    setupEventListeners();
+    renderIntroFlower();
+    renderGardenFlowers();
+    renderSpecialFlower();
+});
+
+/* =========================================================================
+   MANEJO DE ESCENAS
+   ========================================================================= */
+function showScene(sceneNumber) {
+    // Ocultar escena actual
+    document.querySelector('.scene.active').classList.remove('active');
+    currentScene = sceneNumber;
+    
+    // Pequeño delay para una transición elegante
+    setTimeout(() => {
+        document.getElementById(`scene-${sceneNumber}`).classList.add('active');
+    }, 1000);
+}
+
+function setupEventListeners() {
+    // Botón de Escena 1 a 2
+    document.getElementById('btn-start').addEventListener('click', () => {
+        showScene(2);
+        // Abrir la flor de intro suavemente al entrar a la escena 2
+        setTimeout(() => {
+            const introSvg = document.querySelector('#intro-flower svg');
+            if (introSvg) introSvg.classList.add('open');
+        }, 1200);
+    });
+
+    // Botón de Escena 2 a 3 (El Jardín)
+    document.getElementById('btn-enter-garden').addEventListener('click', () => {
+        showScene(3);
+    });
+
+    // Botón de Escena 3 a 4 (después de completar el jardín)
+    document.getElementById('btn-next-special').addEventListener('click', () => {
+        showScene(4);
+    });
+
+    // Botón de Escena 4 a 5 (Final)
+    document.getElementById('btn-final-scene').addEventListener('click', () => {
+        showScene(5);
+        startFinalSequence();
+    });
+
+    // Interacción de la Flor Especial (Escena 4)
+    document.getElementById('special-flower-touch').addEventListener('click', openSpecialFlower);
+}
+
+/* =========================================================================
+   GENERACIÓN SVG (Visualmente delicado y orgánico)
+   ========================================================================= */
+function createFlowerSVG(isOpen = false, isSpecial = false) {
+    const openClass = isOpen ? ' open' : '';
+    const centerColor = isSpecial ? 'var(--yellow-dark)' : '#EAB308';
+    const petalColor = isSpecial ? 'var(--yellow-deep)' : 'var(--yellow-soft)';
+    
+    const numPetals = isSpecial ? 10 : 7;
+    let petalsHTML = '';
+    
+    for (let i = 0; i < numPetals; i++) {
+        const angle = (360 / numPetals) * i;
+        // Retraso sutil para que los pétalos se abran con fluidez orgánica
+        const delay = (Math.random() * 0.3).toFixed(2);
+        petalsHTML += `
+            <g transform="rotate(${angle} 50 30)">
+                <ellipse class="petal" cx="50" cy="10" rx="9" ry="22" fill="${petalColor}" style="transition-delay: ${delay}s"/>
+            </g>
+        `;
+    }
+
+    return `
+        <svg class="flower${openClass}" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+            <!-- Tallo curvo natural -->
+            <path d="M50,40 Q45,75 52,105" stroke="var(--olive-light)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Hojas -->
+            <path d="M51,75 Q35,65 40,50 Q50,60 51,75" fill="var(--olive-dark)"/>
+            <path d="M51,85 Q65,80 60,65 Q50,75 51,85" fill="var(--olive-dark)"/>
+            <!-- Pétalos -->
+            <g class="petal-group">
+                ${petalsHTML}
+            </g>
+            <!-- Centro -->
+            <circle cx="50" cy="30" r="7.5" fill="${centerColor}" />
+        </svg>
+    `;
+}
+
+function renderIntroFlower() {
+    document.getElementById('intro-flower').innerHTML = `
+        <div class="flower-wrapper">
+            ${createFlowerSVG(false, false)}
+        </div>
+    `;
+}
+
+function renderSpecialFlower() {
+    document.getElementById('special-flower-touch').insertAdjacentHTML(
+        'beforebegin', 
+        createFlowerSVG(false, true)
+    );
+}
+
+/* =========================================================================
+   LÓGICA DEL JARDÍN (ESCENA 3)
+   ========================================================================= */
+function renderGardenFlowers() {
+    const gardenArea = document.getElementById('garden-area');
+    
+    gardenData.forEach(flower => {
+        const item = document.createElement('div');
+        item.className = 'garden-item';
+        
+        // Posicionamiento dinámico adaptativo
+        if(flower.top) item.style.top = flower.top;
+        if(flower.bottom) item.style.bottom = flower.bottom;
+        if(flower.left) item.style.left = flower.left;
+        if(flower.right) item.style.right = flower.right;
+        
+        item.style.transform = `scale(${flower.scale})`;
+        
+        item.innerHTML = `
+            <div class="flower-wrapper" style="animation-delay: ${flower.delay}">
+                ${createFlowerSVG(false, false)}
+            </div>
+            <div class="flower-phrase" style="${flower.textStyles}">
+                ${flower.phrase}
+            </div>
+            <div class="touch-area"></div>
+        `;
+        
+        // Asignar evento al área táctil
+        const touchArea = item.querySelector('.touch-area');
+        touchArea.addEventListener('click', () => discoverFlower(item));
+        
+        gardenArea.appendChild(item);
+    });
+}
+
+function discoverFlower(flowerItem) {
+    if (flowerItem.classList.contains('discovered')) return;
+
+    // Actualizar estado visual
+    flowerItem.classList.add('discovered');
+    const svg = flowerItem.querySelector('svg');
+    svg.classList.add('open');
+
+    // Actualizar progreso
+    discoveredCount++;
+    document.getElementById('progress-text').innerText = `${discoveredCount} / ${totalFlowers}`;
+
+    // Validar fin del jardín
+    if (discoveredCount === totalFlowers) {
+        showGardenCompletion();
+    }
+}
+
+function showGardenCompletion() {
+    // Los textos aparecen secuencialmente para crear el efecto de pausa
+    setTimeout(() => {
+        const n1 = document.getElementById('narrative-1');
+        const n2 = document.getElementById('narrative-2');
+        const n3 = document.getElementById('narrative-3');
+        const btn = document.getElementById('btn-next-special');
+
+        n1.classList.add('visible');
+        
+        setTimeout(() => {
+            n1.classList.remove('visible');
+            n2.classList.add('visible');
+            
+            setTimeout(() => {
+                n2.classList.remove('visible');
+                n3.classList.add('visible');
+                
+                setTimeout(() => {
+                    // Mostrar el botón para que el usuario avance cuando quiera
+                    btn.classList.add('visible');
+                }, 1500);
+
+            }, 2500);
+        }, 2500);
+
+    }, 1500); // Esperar un poco después de abrir la 5ta flor
+}
+
+/* =========================================================================
+   LÓGICA DE LA FLOR ESPECIAL (ESCENA 4)
+   ========================================================================= */
+function openSpecialFlower() {
+    const wrapper = document.getElementById('special-flower-area');
+    if (wrapper.classList.contains('open')) return;
+
+    wrapper.classList.add('open');
+    const svg = wrapper.querySelector('svg');
+    svg.classList.add('open');
+
+    // Aparece el mensaje emocional y luego el botón de continuar
+    setTimeout(() => {
+        document.getElementById('special-message').classList.add('visible');
+        
+        setTimeout(() => {
+            const btn = document.getElementById('btn-final-scene');
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+        }, 2000);
+
+    }, 1200);
+}
+
+/* =========================================================================
+   LÓGICA DE LA ESCENA FINAL (ESCENA 5)
+   ========================================================================= */
+function startFinalSequence() {
+    setTimeout(() => {
+        document.getElementById('final-1').classList.add('visible');
+        
+        setTimeout(() => {
+            document.getElementById('final-2').classList.add('visible');
+            
+            setTimeout(() => {
+                document.getElementById('final-3').classList.add('visible');
+                
+                setTimeout(() => {
+                    document.getElementById('final-4').classList.add('visible');
+                    // Fin de la experiencia.
+                }, 3500);
+
+            }, 2500);
+        }, 2500);
+    }, 1000);
+}
