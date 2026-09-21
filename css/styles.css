@@ -103,7 +103,6 @@ p { font-size: 15px; }
     transform: scale(0.96);
 }
 
-/* Botón continuar (Escena 4) */
 .continue-btn {
     opacity: 0;
     pointer-events: none;
@@ -216,18 +215,30 @@ svg.flower.open .petal {
 
 /* =========================================
    7. GARDEN NARRATIVE (Transitions)
+   CORRECCIÓN DEL CONTENEDOR FINAL DEL JARDÍN
    ========================================= */
 .garden-narrative {
     position: absolute;
-    bottom: env(safe-area-inset-bottom, 25px);
+    bottom: 0;
     left: 0;
     width: 100%;
+    height: 25vh; /* Ocupa el 25% inferior de la pantalla */
+    min-height: 140px; 
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     pointer-events: none;
     z-index: var(--z-overlay);
-    text-shadow: 0 2px 15px var(--cream), 0 -2px 15px var(--cream);
+}
+
+.narrative-text-container {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .narrative-text {
@@ -236,6 +247,10 @@ svg.flower.open .petal {
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 1.2s ease, transform 1.2s ease;
+    text-align: center;
+    width: 100%;
+    /* Sombra fuerte para mantener excelente legibilidad sin ensuciar el jardín */
+    text-shadow: 0 2px 10px var(--cream), 0 -2px 10px var(--cream), 2px 0 10px var(--cream), -2px 0 10px var(--cream);
 }
 
 .narrative-text.visible { opacity: 1; transform: translateY(0); }
@@ -245,8 +260,7 @@ svg.flower.open .petal {
     pointer-events: none;
     transform: translateY(10px);
     transition: opacity 1s ease, transform 1s ease;
-    position: absolute;
-    top: 35px; 
+    margin-top: 25px; /* Separación clara y garantizada debajo del texto */
 }
 
 .narrative-btn.visible {
@@ -298,7 +312,6 @@ svg.flower.open .petal {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 1.8s ease, transform 1.8s ease;
-    /* Sombra extremadamente sutil para integración natural */
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.04));
 }
 
