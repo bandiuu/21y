@@ -20,19 +20,22 @@
 
     <div id="app-container">
 
-        <!-- ESCENA 1: INTRO -->
+        <!-- ESCENA 1: PORTADA -->
         <section id="scene-1" class="scene active">
+            <div class="flower-wrapper" id="scene-1-flower">
+                <!-- SVG inyectado por JS (Flor Cerrada) -->
+            </div>
             <h1 class="serif text-main">Tengo algo para ti.</h1>
-            <p class="sans text-sub">Hay algunas cosas que quería decirte.</p>
             <button class="btn" id="btn-start">Descubrir</button>
         </section>
 
-        <!-- ESCENA 2: INTRODUCCIÓN -->
+        <!-- ESCENA 2: REVELACIÓN -->
         <section id="scene-2" class="scene">
-            <div class="flower-showcase" id="intro-flower">
-                <!-- SVG inyectado por JS -->
+            <div class="flower-wrapper scale-up" id="scene-2-flower">
+                <!-- SVG inyectado por JS (Flor Abierta) -->
             </div>
             <h2 class="serif text-main">Hay algunas cosas<br>que quería decirte.</h2>
+            <p class="sans text-sub">Solo tienes que descubrirlas.</p>
             <button class="btn" id="btn-enter-garden">Descubrir</button>
         </section>
 
