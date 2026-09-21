@@ -103,6 +103,21 @@ p { font-size: 15px; }
     transform: scale(0.96);
 }
 
+/* Botón continuar (Escena 4) */
+.continue-btn {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 1s ease, transform 1s ease;
+    margin-top: 30px;
+}
+
+.continue-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
 /* =========================================
    5. FLOWERS (SVG CSS)
    ========================================= */
@@ -191,7 +206,6 @@ svg.flower.open .petal {
     transition: opacity 1s ease, transform 1s ease;
     pointer-events: none;
     z-index: var(--z-phrases);
-    /* Sombra blanca sutil para legibilidad garantizada sobre cualquier tallo */
     text-shadow: 0 1px 8px var(--cream), 0 -1px 8px var(--cream);
 }
 
@@ -274,13 +288,30 @@ svg.flower.open .petal {
 .special-message.visible { opacity: 1; transform: translateY(0); }
 
 /* =========================================
-   9. SCENE 5: FINAL
+   9. SCENE 5: FINAL CON RAMO PNG
    ========================================= */
+.final-bouquet {
+    width: min(78vw, 360px);
+    max-height: 42vh;
+    object-fit: contain;
+    margin-bottom: 25px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1.8s ease, transform 1.8s ease;
+    /* Sombra extremadamente sutil para integración natural */
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.04));
+}
+
+.final-bouquet.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .final-sequence {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 25px;
+    gap: 20px;
 }
 
 .final-text {
@@ -291,11 +322,11 @@ svg.flower.open .petal {
 
 .final-text.visible { opacity: 1; transform: translateY(0); }
 
-#final-2 { font-size: 24px; margin: 15px 0; }
+#final-2 { font-size: 24px; margin: 10px 0; }
 
 .because-yes {
     font-size: 13px;
     letter-spacing: 2px;
-    margin-top: 30px;
+    margin-top: 25px;
     color: var(--text-sub);
 }
